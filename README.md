@@ -1,4 +1,5 @@
 <h1 align="center">🧭 DataPilot</h1>
+
 <p align="center"><b>Upload a CSV. Get it validated, cleaned, modeled, explained, and reported — with proof of exactly what was done to your data and why.</b></p>
 
 <p align="center">
