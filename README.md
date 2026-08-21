@@ -1,30 +1,30 @@
 <h1 align="center">🧭 DataPilot</h1>
-<p align="center"><b>Upload a CSV. Get a cleaned dataset, a trained model, and a full report — with proof of exactly what it did and why.</b></p>
+<p align="center"><b>Upload a CSV. Get it validated, cleaned, modeled, explained, and reported — with proof of exactly what was done to your data and why.</b></p>
 
 <p align="center">
-  <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.11%20%7C%203.12-blue?logo=python&logoColor=white"></a>
+  <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.11%20%7C%203.12-3776AB?logo=python&logoColor=white"></a>
   <a href="https://streamlit.io/"><img src="https://img.shields.io/badge/Streamlit-App-FF4B4B?logo=streamlit&logoColor=white"></a>
-  <a href="https://pandas.pydata.org/"><img src="https://img.shields.io/badge/pandas-2.0%2B-150458?logo=pandas&logoColor=white"></a>
-  <a href="https://scikit-learn.org/"><img src="https://img.shields.io/badge/scikit--learn-1.3%2B-F7931E?logo=scikitlearn&logoColor=white"></a>
-  <a href="https://numpy.org/"><img src="https://img.shields.io/badge/NumPy-1.24%2B-013243?logo=numpy&logoColor=white"></a>
-  <a href="https://docs.pytest.org/"><img src="https://img.shields.io/badge/tests-56%20passing-brightgreen?logo=pytest&logoColor=white"></a>
+  <a href="https://scikit-learn.org/"><img src="https://img.shields.io/badge/scikit--learn-ML%20Engine-F7931E?logo=scikitlearn&logoColor=white"></a>
+  <a href="https://pandas.pydata.org/"><img src="https://img.shields.io/badge/pandas-Data%20Layer-150458?logo=pandas&logoColor=white"></a>
+  <a href="https://numpy.org/"><img src="https://img.shields.io/badge/NumPy-Numeric%20Core-013243?logo=numpy&logoColor=white"></a>
+  <a href="https://docs.pytest.org/"><img src="https://img.shields.io/badge/Tests-56%20passing-brightgreen?logo=pytest&logoColor=white"></a>
   <a href="https://www.docker.com/"><img src="https://img.shields.io/badge/Docker-ready-2496ED?logo=docker&logoColor=white"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow"></a>
 </p>
 
-<p align="center">
-  <i>Upload a CSV. DataPilot validates it, profiles it, scores and cleans its quality issues, detects the right ML task, checks for target leakage, trains and compares models, explains predictions, monitors drift, and builds a downloadable report — all without writing a line of code.</i>
-</p>
+> 💡 **New here?** Jump to the [Beginner Usage Guide](#-beginner-usage-guide) — it walks through the app screen-by-screen, no prior ML or coding knowledge assumed.
 
-<!--
-📸 IMAGE PLACEHOLDER
-Insert: A screenshot of the main dashboard right after a CSV is uploaded —
-        the sidebar (dataset name, row/col count) plus the Overview tab
-        showing the metric cards (Rows, Columns, Duplicate Rows, Missing Values).
-Where: Right here, directly under the badges.
-Purpose: First thing a recruiter or visitor sees — should communicate
-         "this is a real, working tool" in under two seconds.
--->
+**At a glance:**
+
+| ✅ Strengths | ⚠️ Trade-offs |
+|---|---|
+| 56 passing tests, including real end-to-end checks (subprocess + `AppTest`) | Target/task detection is a heuristic, not a learned model |
+| Zero Streamlit imports in `src/` — fully unit-testable engine | Drift monitoring compares numeric means only, no formal statistical test |
+| Every threshold centralized in one config file, not scattered magic numbers | One-hot encoding caps at 30 categories — not ideal for high-cardinality features you want to keep |
+| Documented, self-caught bug history with real root causes | No persistence across sessions, no auth, single-user by design |
+| Auto-fixes safe issues, always asks before anything requiring judgment | `joblib` model files are Python/scikit-learn version-sensitive |
+
+![DataPilot Overview](images/welcomepg.png)
 
 ---
 
@@ -62,28 +62,28 @@ Purpose: First thing a recruiter or visitor sees — should communicate
 - [License](#-license)
 - [Author](#-author)
 - [Why This Project Matters](#-why-this-project-matters)
-- [Interview Prep: Likely Questions](#-interview-prep-likely-questions)
+- [Interview Preparation](#-interview-preparation)
 - [Final Summary](#-final-summary)
 
 ---
 
 ## 📖 What is DataPilot?
 
-**In plain English:** you have a spreadsheet of data (a CSV file) and you want to know if it's any good, clean it up, and maybe build a prediction model from it — but you don't want to write pandas/scikit-learn code every single time. DataPilot is a web page where you drag in a CSV and it does that whole pipeline for you, showing its work at every step.
+**In one sentence:** DataPilot is a web app — upload a spreadsheet (CSV), and it automatically checks the data for problems, fixes what's safely fixable, figures out what you're probably trying to predict, trains and compares a few machine-learning models, explains what they learned, and hands you a downloadable report — without you writing a line of code.
 
-**For a complete beginner:** imagine you have customer data and want to predict who might cancel their subscription. Normally that means opening a code editor, writing cleaning code, writing training code, writing evaluation code — hours of setup before you learn anything. DataPilot does that first pass for you: upload the file, click through a few tabs, and get a trained model, an explanation of what it learned, and a downloadable report.
+**For a complete beginner:** Imagine you have a spreadsheet of customer data and you want to predict who's going to cancel their subscription. Normally that means: writing code to clean messy data, writing more code to pick and train a model, writing more code to check if it actually worked — hours of repetitive setup before you learn anything interesting. DataPilot does that first pass for you. Upload the file, click through a handful of tabs, get a trained model and a plain-English explanation of what it found.
 
-**Technically:** DataPilot is a single-page [Streamlit](https://streamlit.io/) application backed by a pure-Python, UI-agnostic engine (`src/`). Nothing in `src/` imports Streamlit — every function takes a `pandas.DataFrame` in and returns a dict, list, or DataFrame out, which is what makes the entire pipeline independently unit-testable without a browser.
+**Technically:** DataPilot is a [Streamlit](https://streamlit.io/) application with a strict separation between UI (`app/frontend/`) and logic (`src/`). Every actual data-science decision — profiling, cleaning, target/task detection, leakage screening, model training, evaluation, explainability, drift monitoring — is a plain Python function that takes a `pandas.DataFrame` in and returns a dict/list/DataFrame out. None of it imports Streamlit or knows a UI exists, which is what makes the 56-test suite possible without a browser.
 
-Who it's for: students/self-taught developers doing first-pass EDA, anyone who wants a quick "is this dataset trainable, and on what?" answer, and — per the author's own use — a portfolio project demonstrating a real, tested, multi-stage pipeline rather than a single notebook.
+**Who it's for:** anyone doing first-pass EDA/ML on a CSV who doesn't want to hand-write the same boilerplate pipeline every time — and, as a portfolio project, evidence of a tested, multi-module system rather than a single notebook.
 
 ---
 
 ## 🎯 Problem Statement
 
-**Beginner version:** every new CSV file means the same boring checklist by hand — missing values? duplicates? weird outliers? what should I even predict? which model is best? That's tedious and easy to get wrong.
+**Beginner version:** Every new CSV file starts the same tedious way — is anything missing? are there duplicates? do any numbers look wrong? what am I even trying to predict? which model is best? That checklist gets redone by hand, every single time.
 
-**Technical version:** the first-pass stages of a tabular ML workflow — schema validation, EDA, cleaning, task/target inference, leakage screening, baseline model comparison, and reporting — are largely mechanical and repeat almost identically across datasets, yet are usually re-implemented ad hoc in a notebook every time. DataPilot codifies that repeatable part as a tested, reusable pipeline, while explicitly leaving domain judgment (is this outlier real? is this the right target?) to the human — surfaced through explainable, overridable decisions rather than a black box.
+**Technical version:** The first-pass stages of a tabular ML workflow — schema validation, EDA, cleaning, target/task inference, leakage screening, baseline model comparison, and reporting — are largely mechanical and repeat almost identically across datasets, yet are usually re-implemented ad hoc in a notebook each time. DataPilot codifies that repeatable part as a tested, reusable pipeline, while explicitly leaving genuine judgment calls (is this outlier real data or an error? is this the right target column?) to the human — surfaced as an overridable decision, never a silent guess.
 
 ---
 
@@ -92,26 +92,26 @@ Who it's for: students/self-taught developers doing first-pass EDA, anyone who w
 ```text
 Raw CSV
    ↓
-Validation           (is this dataset usable at all?)
+Validation          (is this dataset usable at all?)
    ↓
 Profiling + Quality scoring   (what does it look like, what's wrong?)
    ↓
-Automated cleaning   (optional, with a full audit log)
+Automated cleaning   (fix what has one safe, defensible answer — optional, one click)
    ↓
-Target/task detection   (what should we predict, and how?)
+Target/task detection   (what should we predict, and how — classification or regression?)
    ↓
 Leakage check        (would any feature "cheat"?)
    ↓
-Train & compare multiple models   (with cross-validation)
+Train & compare multiple models   (with cross-validation where the data supports it)
    ↓
-Explain the winner   (feature importance)
+Explain the winner    (feature importance)
    ↓
 Predict + Monitor drift + Recommend next steps
    ↓
-Downloadable report, cleaned CSV, model file
+Downloadable report, cleaned CSV, audit log, trained model
 ```
 
-The guiding rule visible throughout the codebase: **auto-fix things with one universally safe answer** (a missing number → median; extra whitespace → trimmed), and **surface, warn, but never silently guess** things that require judgment (is this outlier real? is this imbalance a problem? does this look like PII?). Every arrow above is a real, separate, independently-tested module in `src/` — not a single monolithic script.
+The guiding rule, visible throughout the codebase: **auto-fix things with one universally safe answer** (a missing number → median; extra whitespace in a category → trimmed), and **surface, warn, but never silently guess** things that require judgment (is this outlier real or bad data? is this class imbalance a problem? does this column contain personal data?).
 
 ---
 
@@ -121,35 +121,34 @@ The guiding rule visible throughout the codebase: **auto-fix things with one uni
 
 | Feature | What it does |
 |---|---|
-| **Validation** | Structural checks before anything else runs — empty dataset, no columns, duplicate column names, columns ≥50% missing. `src/validator.py` |
-| **Profiling** | Per-column dtype, missing count/%, uniqueness, constant-column flag; dataset-level totals. `src/profiler.py` |
-| **Quality scoring (0–100)** | Nine independent issue detectors, rolled into one score weighted by *proportion of rows affected*, not a flat penalty per issue type. `src/quality.py` |
-| **Automated cleaning** | Duplicate removal, median/mode imputation, categorical text normalization, IQR-based outlier correction with an identifier-column guard — every change logged with category, column, action, count, and plain-English reason. `src/cleaner.py` |
-| **ML task detection** | Multi-signal heuristic guesses the likely target column and whether it's Classification or Regression. The user always gets a final, editable dropdown — auto-detection is a default, not a decision. `src/task_detector.py` |
-| **Class imbalance check** | Flags a minority class under 10% of rows, with a harder flag under 2 examples (too few to even split into train/test). `src/task_detector.py` |
-| **Target leakage detection** | Flags suspicious feature names, exact duplicate columns of the target, and correlations ≥0.98 — protected against `inf`/extreme-magnitude values and zero-variance columns. `src/leakage.py` |
-| **Model training & comparison** | Logistic Regression / Decision Tree / Random Forest (classification, all `class_weight="balanced"`), or Linear Regression / Decision Tree / Random Forest (regression) — inside a full `ColumnTransformer` + `Pipeline`. `src/model_selector.py`, `src/model_trainer.py` |
-| **Cross-validation** | 5-fold CV (F1-weighted or R²) added automatically when the dataset is large enough to fold reliably; best-model selection prefers CV score when available. `src/evaluator.py` |
-| **Explainability** | Feature importance for tree-based (`feature_importances_`) and linear (`abs(coef_)`) models, mapped to real post-encoding feature names. `src/explainer.py` |
-| **Batch prediction** | Runs the trained pipeline over the (cleaned) uploaded dataset and appends a `prediction` column. `src/predictor.py` |
-| **Drift monitoring** | Upload a second reference CSV; reports added/removed columns and flags any shared numeric column whose mean shifted ≥20%. `src/monitoring.py` |
-| **Recommendations engine** | Turns quality score, drift warnings, and class imbalance into prioritized (High/Medium/Low) plain-English next steps. `src/recommendations.py` |
-| **PII pattern detection** | Flags columns that look like emails/phone numbers by regex — not by column name — purely as a review prompt. `src/quality.py` |
+| **Validation** | Structural checks before anything else runs — empty dataset, zero columns, duplicate column names, columns ≥50% missing. `src/validator.py` |
+| **Profiling** | Per-column dtype, missing count/%, unique-value count, constant-column flag; dataset-level totals. `src/profiler.py` |
+| **Quality scoring (0–100)** | **9 independent issue detectors** (see [Algorithms](#-algorithms-heuristics--formulas)), weighted by *what proportion of rows is actually affected*, not a flat penalty per issue found. `src/quality.py` |
+| **Automated cleaning** | One click fixes what quality scoring found — duplicate removal, median/mode imputation, categorical whitespace + case normalization, IQR outlier correction with an identifier-column guard — and logs every single change (category, column, action, count, plain-English reason). `src/cleaner.py` |
+| **ML task detection** | A multi-signal scoring heuristic guesses the likely target column and whether the task is Classification or Regression — always shown in an editable dropdown, never trained on silently. `src/task_detector.py` |
+| **Class imbalance detection + mitigation** | Flags a minority class under 10% of rows (harder flag under 2 examples), **and** applies `class_weight="balanced"` to every classifier so the warning actually changes training behavior, not just displays a message. `src/task_detector.py`, `src/model_selector.py` |
+| **Target leakage detection** | Flags suspiciously-named features, exact copies of the target, and correlation ≥0.98 — protected against `inf`/extreme-magnitude values and zero-variance columns corrupting the correlation math. `src/leakage.py` |
+| **Model training & comparison** | Logistic Regression / Decision Tree / Random Forest (classification) or Linear Regression / Decision Tree / Random Forest (regression), each inside a full `ColumnTransformer` + `Pipeline` (median/mode imputation, `StandardScaler`, `OneHotEncoder`). `src/model_selector.py`, `src/model_trainer.py`, `src/preprocessing.py` |
+| **Cross-validation** | 5-fold CV, automatically **skipped** (not attempted-then-suppressed) when a class has too few samples to fold reliably. `src/evaluator.py` |
+| **Explainability** | Feature importance via `.feature_importances_` (tree models) or `.coef_` (linear models), mapped back to human-readable feature names post-encoding. `src/explainer.py` |
+| **Batch predictions** | Runs the trained pipeline over a dataset and appends a `prediction` column. `src/predictor.py` |
+| **Drift monitoring** | Compares a current dataset against a reference dataset for schema changes and numeric mean drift. `src/monitoring.py` |
+| **Recommendations engine** | Plain-English, prioritized (High/Medium/Low) action items synthesized from quality score, drift warnings, and class imbalance. `src/recommendations.py` |
+| **PII pattern detection** | Regex-based (not column-name-based) detection of likely email/phone-number columns — informational only, nothing is auto-removed. `src/quality.py` |
 | **Exports** | Cleaned dataset (CSV), audit log (JSON), predictions (CSV), trained model (`.joblib`), and one combined text report. `src/exporter.py`, `src/report_generator.py` |
 
 ### ⚠️ Partial / Limited
 
 | Feature | Limitation |
 |---|---|
-| **Drift monitoring** | Compares numeric **means** only — no standard deviation, no categorical distribution shift, no formal statistical test (KS-test, PSI). A reasonable first signal, not full distribution-drift detection. |
-| **Target/task detection** | A keyword-and-statistics heuristic, not a learned model. Works well on conventionally-named columns; exactly why the UI shows an editable, never-automatic target selectbox. |
-| **Explainability** | Coefficient/impurity-based, not a model-agnostic method like SHAP. |
-| **Outlier correction** | IQR + median replacement is a solid general default, not appropriate for every distribution (e.g. genuinely multi-modal data). |
+| **Drift monitoring** | Compares numeric **means** only — no standard deviation, no categorical distribution comparison, no formal statistical test (KS-test, PSI). A reasonable first signal, not full distribution-drift detection. |
+| **Target/task detection** | A keyword-and-statistics heuristic, not a learned model — works well on conventionally-named columns, can misfire on unusual schemas. This is exactly why the target dropdown is editable, not automatic. |
+| **Outlier correction** | IQR + median replacement is a reasonable general default, not appropriate for every distribution (e.g. genuinely multi-modal data). |
 
 ### 🔮 Planned (not implemented — see [Roadmap](#-roadmap))
 
 - Hyperparameter tuning (`optuna`)
-- Real SHAP-based explainability
+- Real SHAP-based explainability (currently coefficient/impurity-based)
 - `xgboost` as a fourth candidate model
 - Multi-sheet `.xlsx` export (`openpyxl`)
 
@@ -159,43 +158,45 @@ The guiding rule visible throughout the codebase: **auto-fix things with one uni
 
 ```mermaid
 flowchart TD
-    A[📤 Upload CSV] --> B{Validation passes?}
-    B -- No --> B1[❌ Show errors, stop]
-    B -- Yes --> C[📊 Profile + Quality Score]
-    C --> D[🩺 Data Quality tab: view issues]
-    D --> E[🧹 Clean Dataset Automatically]
-    E --> F[🤖 Task Detection: target + Classification/Regression]
-    F --> G{Class imbalance?}
-    G -- Yes --> G1[⚠️ Warn: minority class too small]
-    G -- No --> H[🛡️ Leakage Check]
-    G1 --> H
-    H --> I[📈 Optional: upload reference dataset → Drift check]
-    I --> J[💡 Recommendations tab]
-    J --> K[🚀 Train & Compare Models]
-    K --> L[📐 Evaluate: accuracy/precision/recall/F1 or R²/MAE/RMSE + CV]
-    L --> M[🔍 Explainability: feature importance]
-    M --> N[🔮 Generate Predictions]
-    N --> O[📄 Download: cleaned CSV, audit log, model, full report]
+    A[Upload CSV] --> B[validate_dataset]
+    B -->|invalid| B1[Show errors, stop]
+    B -->|valid| C[profile_dataset + detect_quality_issues]
+    C --> D[calculate_quality_score]
+    D --> E{User clicks Clean?}
+    E -->|yes| F[clean_dataset_with_log]
+    E -->|no| G[Use raw dataset]
+    F --> G2[Use cleaned dataset]
+    G --> H[detect_target_column + detect_task_type]
+    G2 --> H
+    H --> I[User confirms/overrides target]
+    I --> J[detect_target_leakage]
+    J --> K[train_models: split + fit N pipelines]
+    K --> L[evaluate_models + add_cross_validation]
+    L --> M[select_best_model]
+    M --> N[get_feature_importance]
+    M --> O[generate_predictions]
+    D --> P[generate_recommendations]
+    O --> Q[generate_full_report]
+    N --> Q
+    Q --> R[Download: CSV / JSON / joblib / TXT]
 ```
 
-The Streamlit tabs run in this order, but every tab's underlying code executes on every rerun (Streamlit's execution model) — `st.tabs()` only changes what's *visible*, not what runs, which is how state flows cleanly between tabs.
+Every tab's underlying code executes on **every** Streamlit rerun — `st.tabs()` only changes what's *visible*, not what runs. This was a deliberate choice (see [Engineering Decisions](#-engineering-decisions)).
 
 ---
 
 ## 🏗️ Architecture
 
-DataPilot follows a strict, deliberate UI/logic split:
-
 ```mermaid
 flowchart LR
-    subgraph UI["app/frontend/  (Streamlit — presentation only)"]
-        DB[dashboard.py]
-        SEC[sections/*.py]
-        THM[theme.py]
-        ST[state.py]
-        HLP[helpers.py]
+    subgraph UI["app/frontend/ — presentation only"]
+        direction TB
+        DB[dashboard.py<br/>entry point]
+        SEC[sections/*.py<br/>one file per tab]
+        THM[theme.py / state.py / helpers.py]
     end
-    subgraph ENGINE["src/  (pure Python — zero Streamlit imports)"]
+    subgraph ENGINE["src/ — pure Python, zero Streamlit imports"]
+        direction TB
         VAL[validator.py]
         PRO[profiler.py]
         QUA[quality.py]
@@ -210,7 +211,7 @@ flowchart LR
         REC[recommendations.py + report_generator.py]
         CFG[config.py]
     end
-    UI -->|calls functions, displays results| ENGINE
+    UI -->|calls plain functions, renders results| ENGINE
     CFG -.->|tunable thresholds| QUA
     CFG -.-> CLN
     CFG -.-> LEAK
@@ -218,11 +219,9 @@ flowchart LR
     CFG -.-> PREP
 ```
 
-- **No component of `src/` imports Streamlit.** Every function is a plain input → output transformation, directly verified by `tests/` — this is what makes the 56-test suite run in seconds, with no browser involved.
-- **`app/frontend/dashboard.py` is a thin orchestrator** — it wires session state and calls one `render_*(ctx)` function per tab (`app/frontend/sections/`), each of which calls into `src/`.
-- **`src/config.py` is the single source of tunable thresholds** (IQR multiplier, identifier-ratio cutoff, leakage correlation cutoff, drift %, one-hot cardinality cap, etc.) — every module imports from it instead of hardcoding its own copy, specifically to prevent modules silently disagreeing (a real problem this file's own header documents fixing).
-- **`app/frontend/state.py`** is the only place Streamlit's per-session memory is initialized.
-- There's no database, no external API, and no backend beyond Streamlit's own — a single-process app; "storage" is either in-memory (`st.session_state`) for the session, or a browser download.
+- **Nothing in `src/` imports Streamlit.** Every function is unit-testable with a two-line script — no browser session required.
+- **`src/config.py` is the single source of every tunable threshold** (IQR multiplier, identifier-ratio cutoff, leakage correlation cutoff, drift %, one-hot cardinality cap, ...). Its own header comment documents *why*: these numbers used to be hardcoded independently across five files and could silently drift out of sync when only one got tuned.
+- **No database, no external API, no backend beyond Streamlit's own** — a single-process app; all "storage" is either in-memory (`st.session_state`) for the session, or a browser download.
 
 ---
 
@@ -267,73 +266,111 @@ DataPilot/
 │   ├── recommendations.py
 │   ├── report_generator.py
 │   └── exporter.py
-├── tests/                          # pytest suite — 56 tests, mostly one file per src module
+├── tests/                          # pytest suite — 56 tests across 17 files
 │   ├── conftest.py
 │   ├── test_dashboard_entrypoint.py
 │   ├── test_section_rename_regression.py
 │   └── test_*.py
 ├── data/
-│   ├── raw/                        # Demo-ready sample CSVs (safe to upload when showing the project)
+│   ├── raw/                        # Demo-ready sample CSVs
 │   ├── processed/                  # Empty scratch space (gitignored contents)
-│   └── edge_cases/                 # 16-file robustness/QA test pack — not demo material
+│   └── edge_cases/                 # 16-file robustness/QA pack — not demo material
 ├── models/                         # Empty scratch space for saved .joblib models
-├── experiments/                    # Empty scratch space, not wired to the app
+├── experiments/                    # Empty scratch space, unwired to the app
 ├── Dockerfile
 ├── .dockerignore
 ├── pytest.ini
-├── requirements.txt                 # Actual runtime dependencies
-├── requirements-optional.txt        # Honest roadmap — packages NOT currently used
+├── requirements.txt                # Actual runtime dependencies
+├── requirements-optional.txt       # Honest roadmap — packages NOT currently used
 ├── CHANGELOG.md
-├── LICENSE                          # MIT
+├── LICENSE                         # MIT
 └── README.md
 ```
 
-Nearly every folder above (`src/`, `tests/`, `data/edge_cases/`, `.github/workflows/`, `.streamlit/`) has its own local `README.md` explaining specifically why that folder exists — worth reading if exploring the repo folder-by-folder.
-
-### Key files explained
-
-| Path | Purpose |
-|---|---|
-| `app/frontend/dashboard.py` | Streamlit entry point. Explicitly inserts the project root onto `sys.path` — see [Real Bugs Found & Fixed](#-real-bugs-found--fixed) for why. |
-| `src/config.py` | Every magic number (IQR multiplier, missing-value thresholds, correlation cutoffs, etc.) in one place, with reasoning documented inline. |
-| `src/cleaner.py` | The single cleaning engine used by both the dashboard's cleaning button and `quality.py`'s issue detection, so the two can never silently disagree. |
-| `tests/conftest.py` | Shared pytest fixtures (e.g. a small "messy" DataFrame reused across cleaning tests). |
-| `data/edge_cases/README_TESTS.txt` | File-by-file breakdown of what each edge-case CSV is designed to break. |
+> 📝 Nearly every folder above has its own local `README.md` explaining specifically why that folder exists — worth a look if exploring the repo folder-by-folder.
 
 ---
 
 ## 🧩 Module-by-Module Guide
 
-| Module | Receives | Returns | Purpose |
-|---|---|---|---|
-| `validator.py` | raw DataFrame | `{"valid", "errors", "warnings"}` | First checkpoint — is this dataset usable at all? |
-| `profiler.py` | DataFrame | dict of per-column stats | Powers the Overview tab |
-| `quality.py` | DataFrame | list of issues + 0–100 score | 9 issue categories → weighted quality score |
-| `cleaner.py` | DataFrame | `(cleaned_df, audit_log)` | The **only** cleaning engine — fixes what `quality.py` finds, logs every change |
-| `task_detector.py` | DataFrame, optional override | target, task type, class balance | Guesses target + Classification/Regression; checks class imbalance |
-| `leakage.py` | DataFrame, target | list of warnings | Name-based + correlation-based leakage detection |
-| `preprocessing.py` | DataFrame, target | `ColumnTransformer` | Drops high-cardinality columns, builds impute/scale/encode pipeline |
-| `model_selector.py` | task type | dict of untrained sklearn models | Picks which candidate models to try |
-| `model_trainer.py` | DataFrame, target, task type | trained models + split | Runs the train/test split and `.fit()` |
-| `evaluator.py` | trained models | metrics + best model | Accuracy/precision/recall/F1 or R²/MAE/RMSE, cross-validation, best-model selection |
-| `predictor.py` | trained model, new data | predictions | Batch inference |
-| `explainer.py` | trained model | feature importances | What drove the model's predictions |
-| `monitoring.py` | two DataFrames | drift warnings | Reference vs. current dataset comparison |
-| `recommendations.py` | quality score, issues, drift, class balance | prioritized action list | Plain-English guidance |
-| `report_generator.py` | everything above | formatted text report | Assembles the full downloadable report |
-| `exporter.py` | DataFrame / model / report | bytes | CSV/JSON/`.joblib` serialization for downloads |
+<details>
+<summary><strong>src/validator.py</strong> — first checkpoint after upload</summary>
+
+`validate_dataset(df)` → `{"valid", "errors", "warnings"}`. Hard errors: not a DataFrame, empty dataset, zero columns, duplicate column names. Soft warnings: fully empty columns, columns ≥50% missing. Explicitly guards a real pandas gotcha: a duplicate column name makes `df[column]` return a DataFrame instead of a Series, which would crash a naive `.isna().all()` check.
+</details>
 
 <details>
-<summary><strong>Expand for deeper detail on the trickier modules</strong></summary>
+<summary><strong>src/profiler.py</strong> — dataset overview numbers</summary>
 
-**`cleaner.py`** runs, in this exact order: (1) remove exact duplicate rows, (2) fill missing values (numeric → median, categorical → mode), (3) normalize categorical text (trim whitespace, standardize case-inconsistent duplicates), (4) correct numeric anomalies/outliers via IQR (skipped if >20% of a column would be flagged — that's treated as real variation, not bad data), (5) remove constant columns **last**, since step 4 can turn a near-constant column fully constant. Identifier-like columns (name ends in `id`/`serial`/`uuid`, or ≥98% unique on datasets with ≥30 rows and not a known measurement name) are protected from value replacement.
+`profile_dataset(df)` → row/column counts, duplicate-row count, total missing values, and per-column dtype/missing%/unique-count/constant-flag. Purely descriptive, no judgment calls.
+</details>
 
-**`task_detector.py`**'s `detect_target_column()` scores every column with additive/subtractive signals: name matching (`target`, `label`, `churn`, `fraud`, ...), an ID-keyword penalty, a uniqueness-ratio penalty, a feature-keyword penalty (`age`, `salary`, ...), a low-cardinality bonus, a missing-value penalty, and a slight last-column tie-break. `resolve_target_selectbox_options()` is a pure, UI-free function deciding what the dropdown shows — see the bug it fixes below.
+<details>
+<summary><strong>src/quality.py</strong> — 9 issue detectors + scoring</summary>
 
-**`leakage.py`**'s correlation check explicitly excludes values with magnitude ≥`1e100` and skips columns with fewer than 2 distinct values before computing Pearson correlation, since squaring near-overflow values or dividing by zero variance would otherwise silently produce `NaN`/`inf`.
+`detect_quality_issues(df)` checks: Missing Values, Duplicate Rows, Constant Columns, Category Inconsistency, Potential Outliers (IQR), Invalid Values (numeric-as-text — reuses `cleaner.py`'s own detection function so the two can never disagree), Heavily Missing Column (≥50%), Possible Personal Information (regex-matched), Non-Finite Values (`inf`/`-inf`, called out separately from ordinary outliers since they break correlation/scaling math outright).
 
-**`preprocessing.py`** drops categorical columns with >90% unique values before one-hot encoding (capped at 30 categories otherwise) — a free-text name/ID column would otherwise explode into one feature per unique value. The dashboard shows the user exactly which columns were excluded and why, before training starts.
+`calculate_quality_score(df, issues)` → 0–100, weighting each issue by *what fraction of rows it affects*, not a flat penalty — see the exact weight table in [Algorithms](#-algorithms-heuristics--formulas).
+</details>
 
+<details>
+<summary><strong>src/cleaner.py</strong> — the one cleaning engine, full audit log</summary>
+
+`clean_dataset_with_log(df)` runs, in this order: (1) remove exact duplicate rows, (2) fill missing values (numeric → median, categorical → mode), (3) normalize categorical text (whitespace + case), (4) correct numeric anomalies/outliers, (5) remove constant columns — run **last**, deliberately, since step 4 can turn a near-constant column fully constant.
+
+This is the *only* cleaning code path in the project — the dashboard has no separate copy. Identifier-like columns (name ending in `id`/`uuid`/etc., or ≥98% unique on datasets ≥30 rows) are protected from having their values replaced; a hardcoded measurement-name safety list (`age`, `income`, `price`, ...) can never be overridden by the ratio check alone — see the real bug this fixes, below.
+</details>
+
+<details>
+<summary><strong>src/task_detector.py</strong> — target/task inference + class balance</summary>
+
+`detect_target_column(df)` scores every column additively: +100 for an exact strong-target-name match, +35 per target-like keyword, an ID-keyword penalty, a uniqueness-ratio penalty (very-unique columns are unlikely targets), a feature-keyword penalty (`age`, `salary`, ... look like inputs), a small cardinality bonus for binary/low-cardinality columns, a missing-value penalty, and a slight tie-break preference for the last column. Returns `None` if every column scores non-positive.
+
+`detect_task_type(df, target_column)` classifies Classification vs. Regression from dtype/cardinality. `check_class_imbalance(target)` flags a minority class under 10% (or under 2 samples). `resolve_target_selectbox_options()` is a deliberately pure, Streamlit-free function deciding what the target dropdown shows — see the real bug it fixes, below.
+</details>
+
+<details>
+<summary><strong>src/leakage.py</strong> — target leakage screening</summary>
+
+`detect_target_leakage(df, target_column)` runs three checks: suspicious feature names (`future`, `predicted`, `outcome`, ...), exact-copy columns, and correlation ≥0.98. Values with magnitude ≥`1e100` are excluded before the correlation math runs (squaring such a value would overflow float64), and the correlation is skipped entirely when either side has fewer than 2 distinct values (mathematically undefined otherwise) — both real numerical-stability fixes, not cosmetic ones.
+</details>
+
+<details>
+<summary><strong>src/preprocessing.py</strong> — feature-side prep</summary>
+
+`build_preprocessor(df, target_column)` builds a scikit-learn `ColumnTransformer`: numeric columns get median imputation + `StandardScaler`; categorical columns get most-frequent imputation + `OneHotEncoder(handle_unknown="ignore", max_categories=30)`. Categorical columns >90% unique are dropped entirely before encoding. `detect_high_cardinality_columns()` exposes the same check standalone so the dashboard can show the user what's about to be excluded, and why, before training starts.
+</details>
+
+<details>
+<summary><strong>src/model_selector.py</strong> + <strong>model_trainer.py</strong> — candidates + training</summary>
+
+Classification: `LogisticRegression(max_iter=1000, class_weight="balanced")`, `DecisionTreeClassifier(random_state=42, class_weight="balanced")`, `RandomForestClassifier(n_estimators=100, random_state=42, class_weight="balanced")`. Regression: `LinearRegression()`, `DecisionTreeRegressor(random_state=42)`, `RandomForestRegressor(n_estimators=100, random_state=42)`.
+
+`train_models()` requires ≥10 rows, attempts a stratified 80/20 split for classification (falling back to a plain split if any class has fewer than 2 examples), and fits a fresh `Pipeline(preprocessor, model)` per candidate.
+</details>
+
+<details>
+<summary><strong>src/evaluator.py</strong> — metrics, CV, best-model selection</summary>
+
+`evaluate_models()`: accuracy/precision/recall/F1 (weighted, `zero_division=0`) for classification; MAE/RMSE/R² for regression. `add_cross_validation()` adds 5-fold CV (F1-weighted or R²), skipped cleanly (not attempted-and-caught) when a class has too few samples to fold reliably. `select_best_model()` prefers CV score when present, otherwise the hold-out F1/R².
+</details>
+
+<details>
+<summary><strong>src/predictor.py</strong> + <strong>src/explainer.py</strong></summary>
+
+`generate_predictions()` runs the fitted pipeline over a DataFrame and appends a `prediction` column. `get_feature_importance()` extracts `feature_importances_` (tree models) or `abs(coef_)` (linear models), mapped to real post-encoding feature names; returns an empty DataFrame for unsupported model types rather than raising.
+</details>
+
+<details>
+<summary><strong>src/monitoring.py</strong> — drift detection</summary>
+
+`compare_datasets()` reports added/removed columns and, per shared numeric column, the % change in mean. `detect_data_drift()` turns a ≥20% mean shift into a warning, plus separate warnings for any schema change.
+</details>
+
+<details>
+<summary><strong>src/recommendations.py</strong> + <strong>report_generator.py</strong> + <strong>exporter.py</strong></summary>
+
+`generate_recommendations()` turns quality score, issue severities, drift warnings, and class balance into prioritized action items. `generate_full_report()` assembles everything run so far into one text report — sections that weren't run are simply omitted, not shown as blank/broken. `exporter.py` is pure serialization: DataFrame → CSV/JSON bytes, model → joblib bytes.
 </details>
 
 ---
@@ -342,26 +379,25 @@ Nearly every folder above (`src/`, `tests/`, `data/edge_cases/`, `.github/workfl
 
 | Technology | Where / Why it's used |
 |---|---|
-| [Python](https://www.python.org/) 3.11 / 3.12 | Core language (Docker pins 3.12-slim; CI matrix tests both) |
-| [Streamlit](https://streamlit.io/) ≥1.32 | The entire UI — upload, tabs, widgets, download buttons, session state. Zero business logic lives here. |
-| [pandas](https://pandas.pydata.org/) ≥2.0 | All DataFrame manipulation — profiling, cleaning, quality checks, monitoring |
-| [NumPy](https://numpy.org/) ≥1.24 | Numeric-stability checks (`np.isfinite`, `np.isclose`) in `cleaner.py`/`quality.py` |
-| [scikit-learn](https://scikit-learn.org/) ≥1.3 | `ColumnTransformer`/`Pipeline` preprocessing, all six candidate models, split, CV, every metric |
-| [joblib](https://joblib.readthedocs.io/) ≥1.3 | Serializing/deserializing trained pipelines |
-| [pytest](https://docs.pytest.org/) ≥8.0 | The full 56-test suite, including a Streamlit `AppTest`-based end-to-end test |
-| [Docker](https://www.docker.com/) | Optional containerized deployment |
-| [GitHub Actions](https://docs.github.com/actions) | CI — test matrix (3.11 + 3.12) then Docker build verification |
+| [Python](https://www.python.org/) 3.11 / 3.12 | Core language — CI tests both; the Dockerfile pins `python:3.12-slim`. |
+| [Streamlit](https://streamlit.io/) | The entire UI — file upload, tabs, widgets, session state. Zero business logic lives here. |
+| [pandas](https://pandas.pydata.org/) | All DataFrame manipulation — profiling, cleaning, quality checks, monitoring. |
+| [NumPy](https://numpy.org/) | Numeric-stability checks (`np.isfinite`, `np.isclose`) in `cleaner.py`, `quality.py`, `leakage.py`. |
+| [scikit-learn](https://scikit-learn.org/) | `ColumnTransformer`/`Pipeline` preprocessing, all six candidate models, train/test split, cross-validation, every evaluation metric. |
+| [joblib](https://joblib.readthedocs.io/) | Serializing/deserializing trained pipelines for download. |
+| [pytest](https://docs.pytest.org/) | The full 56-test suite, including a Streamlit `AppTest`-based end-to-end test. |
+| [Docker](https://www.docker.com/) | Optional containerized deployment. |
+| [GitHub Actions](https://docs.github.com/actions) | CI — test matrix (3.11 & 3.12) + Docker build verification. |
 
-**Not used** (worth being explicit about, since similar projects often list these): XGBoost, LightGBM, CatBoost, SHAP, Optuna — all honestly parked in `requirements-optional.txt` as roadmap items, not silently unused imports. No database, no external API, no authentication system.
+**Not used** (worth being explicit about — see `requirements-optional.txt`): XGBoost, LightGBM, CatBoost, SHAP, Optuna, any database, any external API, any authentication system.
 
 ---
 
 ## ⚙️ Requirements
 
-- **Python:** 3.11 or 3.12 (Docker pins `python:3.12-slim`)
-- **OS:** any OS that runs Python + pip — no OS-specific code paths anywhere
-- **Dependencies** (`requirements.txt`): `pandas>=2.0`, `numpy>=1.24`, `scikit-learn>=1.3`, `streamlit>=1.32`, `joblib>=1.3`, `pytest>=8.0`
-- **No API keys, accounts, or external services required** — fully local/offline; no data ever leaves the machine it runs on
+- Python 3.11 or 3.12
+- `pip`
+- No API keys, no external services, no database — everything runs locally
 - No GPU required — every model is a lightweight scikit-learn estimator
 
 ---
@@ -377,13 +413,16 @@ cd DataPilot
 python -m venv venv
 
 # 3. Activate it
-source venv/bin/activate        # Windows: venv\Scripts\activate
+# Windows (PowerShell):
+venv\Scripts\Activate.ps1
+# macOS/Linux:
+source venv/bin/activate
 
 # 4. Install dependencies
 pip install -r requirements.txt
 ```
 
-No environment variables or extra configuration are required.
+No environment variables or additional configuration are required.
 
 ---
 
@@ -393,7 +432,7 @@ No environment variables or extra configuration are required.
 streamlit run app/frontend/dashboard.py
 ```
 
-Streamlit prints a local URL — by default:
+Streamlit prints a local URL — typically:
 
 ```
 http://localhost:8501
@@ -412,26 +451,27 @@ Then open `http://localhost:8501`.
 
 ## 👶 Beginner Usage Guide
 
-1. **Upload** — sidebar → "Choose a CSV file" → "🚀 Upload & Analyze."
-2. **Overview** — row/column counts and a data preview.
-3. **Data Quality** — review the 0–100 score and detected issues; click the cleaning button if you want them auto-fixed, and review the audit log of exactly what changed.
-4. **Task Detection** — confirm or change the suggested target column and task type; check leakage warnings.
-5. **Monitoring** *(optional)* — upload a second CSV to compare against the current one for drift.
-6. **Recommendations** — read the prioritized suggestions.
-7. **Model Training** — "🚀 Train & Compare Models," review the metrics table, then "Generate Predictions."
-8. **Report** — download the full text report, cleaned CSV, audit log, predictions, and/or trained model.
+1. **Upload** — sidebar → "Choose a CSV file" → pick a file → **🚀 Upload & Analyze**.
+2. **📊 Overview** — see row/column counts and a data preview.
+3. **🩺 Data Quality** — see the 0–100 score and what's wrong (if anything). Click **Clean Dataset Automatically** if you want DataPilot to fix what it safely can — review the audit log of exactly what changed.
+4. **🤖 Task Detection** — confirm (or change) which column you're trying to predict, and the detected task type.
+5. **📈 Monitoring** *(optional)* — upload a second CSV to compare against for drift.
+6. **💡 Recommendations** — read the prioritized suggestions.
+7. **🚀 Model Training** — click **Train & Compare Models**, review the metrics table, generate predictions.
+8. **📄 Report** — download the full report, cleaned CSV, audit log, predictions, and/or trained model.
 
-New to the app? `data/raw/` ships several ready-to-upload sample CSVs (a clean baseline, a regression example, a high-cardinality trap, a leakage trap, and a drift reference/current pair) — each built to showcase one specific feature.
+New to trying it? Any file in `data/raw/` is safe, demo-ready sample data — each one is built to showcase a specific feature (see that folder's own `README.md`).
 
 ---
 
 ## 📥 Input & Output
 
 ### Input
-- **Format:** CSV only (`st.file_uploader(type=["csv"])`), parsed via `pandas.read_csv()`
-- **Size:** Streamlit's default 200MB upload limit
-- Rejected if it parses to an empty DataFrame; a parse failure surfaces the underlying pandas error rather than crashing silently
-- No fixed schema, column names, or naming convention required — genuinely dataset-agnostic, verified against the 16 varied CSVs in `data/edge_cases/`. Model training specifically requires ≥10 rows.
+- **Format:** CSV only (`st.file_uploader(type=["csv"])`)
+- **Size limit:** Streamlit's default 200MB per file
+- **Structure:** no fixed schema or column-name requirement — validated first, with clear errors on anything fundamentally unusable (empty, duplicate column names)
+- **Column types:** numeric and text/categorical both supported; numeric-looking text (e.g. `"42"` stored as a string) is auto-detected where ≥80% of a column's values parse successfully
+- **Minimum rows for training:** 10 (enforced by `train_models()`, which raises rather than attempting a meaningless split)
 
 ### Output
 
@@ -441,19 +481,9 @@ New to the app? `data/raw/` ships several ready-to-upload sample CSVs (a clean b
 | Cleaning audit log | `.json` | Data Quality tab |
 | Predictions | `.csv` | Model Training tab |
 | Trained model | `.joblib` | Model Training tab |
-| Full combined report | `.txt` | Report tab |
+| Full report | `.txt` | Report tab |
 
-All downloads are generated in-memory (`src/exporter.py`) and streamed straight to the browser — nothing is written to disk server-side during normal use.
-
-<!--
-📸 IMAGE PLACEHOLDER
-Insert: Screenshot of the Model Training tab after clicking "Train & Compare
-        Models" — the metrics table (accuracy/precision/recall/F1 or R²/MAE/RMSE)
-        across all trained models, plus the feature importance chart.
-Where: Directly under this section.
-Purpose: The "payoff" screen — the most technically interesting part of the
-         app for a developer or interviewer skimming the README.
--->
+All downloads are generated in-memory and streamed to the browser — nothing is written to disk on the server during normal use.
 
 ---
 
@@ -461,21 +491,21 @@ Purpose: The "payoff" screen — the most technically interesting part of the
 
 ### Quality score (`src/quality.py`)
 
-A 0–100 score, `100 − Σ(penalty per issue type)`, across **nine** issue categories:
+Starts at 100, reduced by a per-issue penalty:
 
-| Category | Penalty | Trigger |
+| Category | Weight | Trigger |
 |---|---|---|
 | Missing Values | `min(count/rows, 1.0) × 15` | Any missing value |
-| Invalid Values | `min(count/rows, 1.0) × 15` | Non-numeric text inside a mostly-numeric column (e.g. `"72k"`) |
+| Invalid Values | `min(count/rows, 1.0) × 15` | Non-numeric text inside a predominantly numeric column |
 | Duplicate Rows | `min(count/rows, 1.0) × 10` | Exact duplicate rows |
-| Constant Column | `5` (flat) | Only one unique value |
-| Category Inconsistency | `3` (flat) | Case/whitespace variants of the same category |
-| Potential Outliers | `2` per column | IQR-flagged values |
-| Heavily Missing Column | `10` (flat) | ≥50% of a column is missing |
-| Possible Personal Information | `3` (flat) | Regex-matched email/phone-shaped values |
-| Non-Finite Values | `12` (flat) | Literal `inf`/`-inf` present |
+| Heavily Missing Column | flat `10` | ≥50% of a column is missing |
+| Non-Finite Values | flat `12` | Literal `inf`/`-inf` present |
+| Constant Column | flat `5` | Only one unique value |
+| Possible Personal Information | flat `3` | Email/phone-shaped values, regex-matched |
+| Category Inconsistency | flat `3` | Case/whitespace variants of the same category |
+| Potential Outliers | flat `2` | IQR-flagged values |
 
-Row-proportional weighting means one bad column in a 10,000-row dataset doesn't tank the score the way it would in a 20-row dataset. Clamped to `[0, 100]`.
+Weights reflect actual risk, not issue count: a heavily-missing column (10) is penalized more than an ordinary missing value, since imputing 70%+ fabricated data is a bigger integrity concern than filling a handful of gaps. Score is clamped to `[0, 100]`.
 
 ### Outlier detection — IQR (Tukey's fences)
 
@@ -485,17 +515,21 @@ lower_bound = Q1 − 1.5 × IQR
 upper_bound = Q3 + 1.5 × IQR
 ```
 
-Skipped below 8 valid values (too noisy to trust). If more than 20% of a column would be flagged, DataPilot treats that as real variation and skips auto-correction, flagging it for manual review instead of guessing.
+Skipped on columns with fewer than 8 valid values (bounds too noisy to trust). If more than 20% of a column's values would be flagged, DataPilot treats that as real variation, not bad data, and flags it for manual review instead of auto-correcting.
 
 ### Identifier column protection
 
-A column is protected from value replacement if:
-1. Its name ends in `id`, `identifier`, `serial`, or `uuid`, **or**
-2. It's ≥98% unique **and** the dataset has ≥30 rows **and** the column name isn't in a hardcoded list of known measurement terms (`age`, `income`, `price`, ...)
+A column is protected from having its values replaced if:
+1. Its name ends in `id`, `_id`, `identifier`, `serial`, or `uuid`, **or**
+2. It's ≥98% unique **and** the dataset has ≥30 rows **and** the column name isn't a known measurement term (`age`, `income`, `price`, ...)
 
-The 30-row minimum and known-measurement-name safety net exist because of a real false-positive bug — see [Real Bugs Found & Fixed](#-real-bugs-found--fixed).
+The 30-row and known-measurement-name conditions exist because of a real bug — see [Real Bugs Found & Fixed](#-real-bugs-found--fixed).
 
-### Class imbalance
+### Target-column scoring
+
+An additive/subtractive point system: `+100` for an exact strong-name match (`target`, `label`, `y`, ...), `+35` per target-like keyword match, penalties for ID-like names and high uniqueness, penalties for feature-like names (`age`, `salary`, ...), a small bonus for binary/low-cardinality columns, a missing-value penalty, and a slight tie-break toward the last column. Transparent and inspectable — not a trained model.
+
+### Class imbalance detection
 
 ```
 minority_ratio = minority_class_count / total_rows
@@ -503,29 +537,28 @@ is_imbalanced = minority_ratio < 0.10
 too_few_to_split = minority_class_count < 2
 ```
 
-### Target leakage
+### Target leakage detection
 
-Three independent checks: (1) suspicious feature names (`future`, `post`, `predicted`, `actual`, ...), (2) exact-copy columns, (3) Pearson correlation ≥0.98 — after excluding values with magnitude ≥`1e100` and skipping columns with fewer than 2 distinct values, since either would make the correlation math undefined or overflow-prone.
+Three independent checks: suspicious feature *names*, exact-copy columns, and Pearson correlation ≥0.98 — after excluding `NaN`, non-finite, and magnitude-≥1e100 values, and skipping the calculation entirely when either side has fewer than 2 distinct values.
 
-### Best-model selection
+### Drift detection
 
-Cross-validated score (F1-weighted for classification, R² for regression) preferred when computable; otherwise falls back to the hold-out F1/R² score.
+Compares the numeric **mean** of each shared column between a reference and current dataset; flags a warning if the % change exceeds 20%. Also flags any column present in one dataset but not the other.
 
 ---
 
 ## 🧪 Testing
 
 ```bash
-pip install -r requirements.txt
 pytest
 ```
 
-**56 tests, all passing**, across 17 files (mostly one per `src/` module — coverage isn't strictly 1:1, some modules are exercised indirectly). Notable ones beyond straightforward unit coverage:
+**56 tests across 17 files** in `tests/` — mostly one file per `src/` module (coverage isn't strictly 1:1; see `tests/README.md`). Notable ones:
 
-- `test_dashboard_entrypoint.py` — runs `python app/frontend/dashboard.py` as a real **subprocess** and inspects stderr for `ModuleNotFoundError`, since `streamlit run` resolves import paths differently than `pytest` — a regression test for a real bug (see below).
-- `test_section_rename_regression.py` — boots the real dashboard via Streamlit's own `AppTest` framework as an end-to-end check.
-- `test_target_selectbox.py` — covers the "no confident target detected" UI-state logic in isolation.
-- `conftest.py` — a shared "messy" fixture DataFrame (duplicates, missing values, case-inconsistent text) reused across cleaning-related tests.
+- **`test_dashboard_entrypoint.py`** — runs `python app/frontend/dashboard.py` as a real subprocess and inspects stderr for `ModuleNotFoundError`, since `streamlit run` and `pytest` resolve import paths differently and a bug here wouldn't be caught by ordinary unit tests.
+- **`test_section_rename_regression.py`** — boots the real dashboard via Streamlit's own `AppTest` framework as an end-to-end check, not just isolated function calls.
+- **`test_target_selectbox.py`** — covers the "no confident target detected" UI-state logic in isolation.
+- **`conftest.py`** — a shared "messy" fixture DataFrame (duplicates, missing values, case-inconsistent categories) reused across cleaning-related tests.
 
 CI (`.github/workflows/ci.yml`) runs this suite on Python 3.11 **and** 3.12 on every push/PR to `main`, then separately verifies the Docker image builds.
 
@@ -533,107 +566,107 @@ CI (`.github/workflows/ci.yml`) runs this suite on Python 3.11 **and** 3.12 on e
 
 ## 🐛 Real Bugs Found & Fixed
 
-Pulled directly from `CHANGELOG.md` and `src/config.py`'s own bug-history comments — not reconstructed or invented.
+Documented from `CHANGELOG.md` and inline code comments — not reconstructed or invented.
 
-| Problem | Why It Happened | Fix | Lesson |
+| Problem | Why it happened | Fix | Lesson |
 |---|---|---|---|
-| An 11-row dataset's `age` column had a real outlier (`200`, vs. a 24–51 range) silently skipped during cleaning. | The identifier-detection ratio check (min-rows was originally 10) saw 11/11 unique values and classified `age` as an ID column, exempting it from correction. | Raised the minimum row threshold to 30, and added an independent safety net: a hardcoded list of known measurement-column names that can never be classified as an identifier by ratio alone. | A statistical heuristic needs a minimum sample size to be meaningful, and benefits from a second, orthogonal signal as backup — not just a bigger threshold. |
-| The Data Quality issue count and the cleaning audit log disagreed on "invalid value" counts. | `quality.py` and `cleaner.py` each had their own independent "does this look numeric" implementation, free to drift apart. | `quality.py` now reuses `cleaner.py`'s exact detection function instead of reimplementing it. | Duplicated business logic across modules is a silent-inconsistency bug waiting to happen. |
-| A 100%-missing numeric column still logged **"Filled with median"** even though nothing was filled. | `fillna(median)` is a silent no-op when the median itself is `NaN` (undefined with no data), but the log entry was written unconditionally. | The fill log entry is now skipped when the median is undefined, letting the accurate constant-column-removal step explain what happened. | Log what actually happened, not what a step nominally attempted. |
-| The target selectbox silently defaulted to the *first* column when no confident target was detected. | The dashboard hardcoded `default_index = 0` whenever `detect_target_column()` returned `None`. | Extracted the decision into a pure, tested function (`resolve_target_selectbox_options()`) that shows an explicit "— Select a target column —" placeholder instead. | "No confident answer" should be a visible UI state, not silently collapsed into an arbitrary default. |
-| `streamlit run app/frontend/dashboard.py` could crash with `ModuleNotFoundError: No module named 'src'`, even though pytest never caught it. | `streamlit run` only adds the script's own folder to `sys.path`, not the project root — unlike `pytest`, which resolves import roots automatically. | `dashboard.py` now explicitly inserts the project root into `sys.path` before any `src` import. | A green test suite doesn't guarantee the real entry point works the same way — `test_dashboard_entrypoint.py` was added specifically to close this gap. |
-| A near-`1e308` (finite but astronomically large) value crashed leakage correlation with NaN/inf, and separately overflowed an `Int64` dtype-restoration cast. | Correlation math effectively squares values, overflowing float64 near its limit; `Int64` can't represent every "whole-looking" float. | Values with magnitude ≥`1e100` are excluded from leakage correlation specifically; dtype restoration now checks both "is it whole" and "does it fit in Int64's range" before casting. | A value doesn't need to be literal `inf` to behave like it mathematically — bound checks by the actual failure mode. |
-| Class imbalance was detected and displayed, but never mitigated during training. | `check_class_imbalance()` existed and warned the user, but nothing in `model_selector.py` changed how models were trained. | Added `class_weight="balanced"` to all three classifiers. Verified on a realistic imbalanced dataset: minority-class recall went from 0.00 to 0.33 with this one change, same data, same model. | A warning without a mitigation is only half a feature. |
+| `streamlit run app/frontend/dashboard.py` could fail with `ModuleNotFoundError: No module named 'src'` | `streamlit run` only adds the target file's own folder to `sys.path`, not the project root — unlike `pytest`, which resolves this automatically via `pytest.ini` | `dashboard.py` now explicitly computes and inserts the project root into `sys.path` before any `src` import | A test suite passing doesn't guarantee the real entry point works — added `test_dashboard_entrypoint.py` to close exactly this gap |
+| An 11-row dataset's `age` column had a real outlier (`200`, vs. a normal range of 24–51) silently skipped during cleaning | The identifier-detection ratio check (minimum row threshold was originally `10`) saw 11/11 unique values and classified `age` as an ID column, exempting it from correction | Raised the row-count threshold to 30, and added a second, independent safety net — a hardcoded set of known measurement-column names that can never be classified as an identifier by ratio alone | A statistical heuristic needs a minimum sample size to be meaningful, plus an orthogonal backup signal — not just a bigger threshold |
+| Cleaning audit log claimed **"Filled with median"** on a column that was 100% missing | `pandas.median()` on an all-NaN column returns `NaN` itself; `fillna(NaN)` is a silent no-op, but the code logged success unconditionally | Skip the fill-log entry when the computed median is itself undefined; let the (already-correct) constant-column-removal step explain what actually happened | Log what *actually* happened, not what a step nominally attempted |
+| Data Quality tab and the cleaning audit log disagreed on issue counts | `quality.py` and `cleaner.py` each had an independent implementation of "does this column look numeric," which could silently drift apart | `quality.py` now imports and reuses `cleaner.py`'s exact detection function instead of reimplementing it | Duplicated business logic across modules is a silent-inconsistency bug waiting to happen |
+| `TypeError: cannot safely cast non-equivalent float64 to int64` when cleaning a column containing `1e308` | A value can be mathematically whole (passes a `% 1 == 0` check) while still being astronomically larger than `Int64` can represent | Added an explicit finite-and-in-range check before attempting the `Int64` cast, not just a whole-number check | "Is this a whole number" and "does this fit in the target type" are two separate questions |
+| `RuntimeWarning: invalid value encountered in divide` during leakage correlation on constant or near-infinite columns | Pearson correlation divides by each column's standard deviation — undefined (0/0) for a constant column, overflow-prone for `inf`/extreme-magnitude values | Skip the correlation calculation entirely (not compute-then-discard) when either column has fewer than 2 distinct values or contains non-finite/extreme values | Prevent a mathematically undefined operation rather than computing it and suppressing the noisy-but-correct result |
+| The target-column dropdown, on a dataset with no confident auto-detected target, silently defaulted to the *first* column | The dashboard's own fallback logic hardcoded `default_index = 0` whenever detection returned `None` | Extracted the decision into a pure, unit-tested function that shows an explicit placeholder ("— Select a target column —") instead of silently pre-selecting a real column | "No confident answer" should be a visible UI state, not silently collapsed into an arbitrary default |
+| Class imbalance was detected and displayed, but never mitigated during training | `check_class_imbalance()` existed and warned the user, but nothing in `model_selector.py` changed how models were actually trained | Added `class_weight="balanced"` to all three classifiers — verified on a realistic imbalanced dataset: minority-class recall went from 0.00 to 0.33 with this one change, same data, same model | A warning without a mitigation is only half a feature |
 
-The full, dated history is in [`CHANGELOG.md`](CHANGELOG.md).
+Full dated history in [`CHANGELOG.md`](CHANGELOG.md).
 
 ---
 
 ## 🧠 Engineering Decisions
 
-- **`src/` never imports Streamlit** — a deliberate boundary, not an accident. It's what makes 56 tests possible without a browser, and what let the ~1,900-line original `dashboard.py` get split into per-tab section files via pure refactoring (AST-based variable renaming, not find/replace), verified against the existing suite plus real end-to-end runs before/after, with zero logic changes.
-- **One cleaning engine, not two** — `cleaner.py` is called by both the dashboard's cleaning button and `quality.py`'s issue detection, so the two can never silently disagree (see the bug this fixed, above).
-- **`config.py` as the single source of tunable thresholds**, explicitly to stop the same magic number being hardcoded independently across five files and drifting apart when only one gets tuned.
-- **`app/frontend/sections/*.py` files are named `*_section.py`**, not `quality.py`/`recommendations.py`, specifically to avoid colliding with the identically-purposed files in `src/`.
-- **Auto-detection is always overridable** — target-column detection and the cleaning step are presented as defaults the user confirms, not decisions the app makes unilaterally, a direct response to the target-selectbox bug above.
-- **`class_weight="balanced"`** is applied by default, not just detected-and-reported — a documented, measured improvement, not a guess.
-- **High-cardinality columns are dropped before one-hot encoding, and the dashboard explicitly tells the user which ones and why**, rather than silently letting `OneHotEncoder` explode into thousands of near-useless features.
-- **Auto-fix the safe things, warn about the judgment calls** — a philosophy visible consistently across `cleaner.py`, `quality.py`, and `leakage.py`: a missing number gets fixed; a possible-PII column or a severe class imbalance only ever gets flagged.
+- **`src/` never imports Streamlit** — every business-logic function needs to be testable without a browser session; this is why the full suite runs in under 10 seconds.
+- **`dashboard.py` was split into `state.py` / `theme.py` / `helpers.py` / `sections/*.py`** — it used to be a single ~1,900-line file. The split was done via AST-based variable analysis (not manual find/replace) specifically to guarantee zero behavioral change, verified against the full test suite and real end-to-end app sessions before and after.
+- **`app/frontend/sections/*.py` are named `*_section.py`**, not just `quality.py` — to avoid colliding with the identically-named `src/quality.py`, `src/recommendations.py`, etc.
+- **Every threshold lives in `src/config.py`** — before this file existed, the same numbers were hardcoded independently across five modules, a classic source of silent inconsistency.
+- **`st.tabs()` instead of separate pages** — every tab's code still executes on every rerun regardless of which tab is visible, so cross-tab state (e.g. the target column picked in Task Detection, which Model Training depends on) keeps working exactly as it did in the original single-page script.
+- **Auto-detection is always overridable, never silent** — both the target-column dropdown and the cleaning step are presented as defaults the user confirms, a direct response to the target-selectbox bug above.
+- **Cleaning auto-fixes some issues but only *warns* about others** — one universally safe answer gets fixed automatically; anything requiring judgment (is this outlier real? is this imbalance a problem? does this look like PII?) is surfaced, never silently resolved.
 
 ---
 
 ## 🔐 Hardcoding & Generalization
 
-DataPilot makes **no assumptions about column names, dataset domain, or schema** — target detection, task-type inference, cleaning, and leakage checks all operate on statistical/structural signals (dtype, cardinality, missing ratio, name-keyword matching), not on specific columns being present. Verified by the 16-file `data/edge_cases/` pack, which deliberately varies schema, naming, and structure.
+DataPilot makes **no assumptions about column names, dataset domain, or schema** — target detection, task-type inference, cleaning, and leakage checks all operate on statistical/structural signals (dtype, cardinality, missing ratio, name-keyword matching), not specific expected columns. Verified by the 16-file `data/edge_cases/` pack, which deliberately varies schema, naming, and structure.
 
-What **is** hardcoded, by design and documented as such:
-- Keyword lists used for scoring (target-like words, ID-like words, feature-like words, leakage-suggestive words, known measurement-column names) — tuned on common English naming conventions; less effective on non-English or cryptic/abbreviated column names.
-- Numeric thresholds in `config.py` — fixed defaults, tunable in one place but not currently exposed as UI controls.
-- Model training requires **at least 10 rows**; below that, `train_models()` raises rather than attempting a meaningless split.
+What **is** hardcoded, by design, and documented honestly:
+- ⚠️ A small set of keyword lists (target-like words, ID-like words, feature-like words, leakage-suggestive words, known measurement-column names) — tuned on common English column-naming conventions; less effective on other languages or cryptic abbreviations.
+- ⚠️ Numeric thresholds in `config.py` are fixed defaults, tunable in one place, not currently exposed as UI controls.
+- ✅ Training requires ≥10 rows; below that, `train_models()` raises rather than attempting a meaningless split.
+- ✅ No fixed file paths beyond the project's own structure — uploaded data is never written to a hardcoded location.
 
 ---
 
 ## 🔬 Technical Deep Dive
 
-- **State management:** `st.session_state` for cross-rerun persistence (uploaded dataset, cleaning results, training results, predictions); a per-run context object for values that only need to flow between tabs within a single script execution.
-- **Data flow between tabs:** since every tab's code runs on every rerun, a value computed earlier (e.g. the cleaned dataset) is simply read by a later tab in the same run — no explicit message-passing needed.
-- **Error handling:** risky operations (e.g. task detection, prediction generation) are wrapped in `try/except`, degrading to a clear warning message instead of crashing the page.
-- **File handling:** all processing is in-memory via pandas; nothing is written to disk server-side. Downloads are generated as in-memory bytes and streamed directly to the browser.
-- **No caching layer, no background jobs, no async** — a synchronous, single-session Streamlit app by design; there's no current need for more given the scope.
+- **State management:** `st.session_state` for cross-rerun persistence (uploaded dataset, cleaning/training results); a per-run `SimpleNamespace` (`ctx`) for values that only need to flow between tabs within a single script execution.
+- **Data flow between tabs:** since every tab's code runs on every rerun, a value computed in an earlier tab (e.g. `ctx.cleaned_df`) is simply an attribute on the shared `ctx` object, read by a later tab in the same script run.
+- **Error handling:** sections wrap risky operations (e.g. task detection) in `try/except`, degrading to a clear warning rather than crashing the whole page.
+- **File handling:** everything happens in-memory via pandas; downloads are generated as in-memory bytes and streamed directly to the browser — nothing touches server-side disk during normal use.
+- **No caching layer, no background jobs, no async** — a synchronous, single-session app by design; there's no current need for more given the scope.
 
 ---
 
 ## 🧪 Edge Cases
 
-`data/edge_cases/` is a 16-file robustness/QA pack (see `README_TESTS.txt` in that folder for the full breakdown) covering: mixed numeric/decimal formats, an all-missing column, constant columns, duplicate rows, extreme class imbalance, high-cardinality identifier columns, target leakage, numeric-as-text values, messy/inconsistent text, mixed date formats, a near-minimum-size dataset, a dataset with no clear target, a single-class target, infinite/extreme numeric values, a mostly-missing dataset, and malformed column names.
+`data/edge_cases/` is a 16-file robustness/QA pack, each file targeting one specific failure mode (see that folder's `README_TESTS.txt` for the full breakdown).
 
 ### ✅ Handled
-- Non-numeric values inside a mostly-numeric column (converted, logged)
-- IQR outliers, with an auto-correction ceiling to avoid over-correcting genuine variation
-- Identifier columns on small datasets (false-positive-safe, per the fix above)
-- Infinite/astronomically large numeric values, in both cleaning and leakage correlation math
-- Severely imbalanced or single-class targets (flagged; training still allowed, minority-class recall called out)
-- Constant columns / single-class targets removed during cleaning, with an explicit warning connecting the dots in Task Detection rather than the target silently vanishing
+- All-missing column → correctly dropped, no false "filled" claim in the audit log
+- Extreme class imbalance (29:1, and a 1-example minority class) → detected, warned, CV skipped cleanly, `class_weight="balanced"` mitigates during training
+- Target leakage (exact copies, near-perfect correlation) → detected and flagged
+- `inf` / `-inf` / astronomically large finite values (`1e308`) → no longer crash cleaning; excluded from correlation math; flagged as a distinct "Non-Finite Values" issue
+- Constant columns / single-class target → removed during cleaning, with an explicit warning connecting the dots in Task Detection
+- High-cardinality identifier + PII columns (name, email) → excluded from training with a visible reason, separately flagged as possible personal information
+- Numeric values stored as text, with genuinely non-numeric values mixed in → detected and imputed with median
 
 ### ⚠️ Partially handled
-- A dataset with no clearly-named target — the heuristic still returns its best guess rather than `None`; the editable target selectbox is the actual safety net, not a refusal to guess
+- A dataset with no clearly-named target column → the heuristic still picks *something* (the least-bad candidate); the editable target dropdown is the actual safety net, not the detector refusing to guess
 
 ### ❌ Not currently handled
 - Non-English column names/keywords (target/leakage detection relies on English keyword lists)
-- Multi-file/multi-sheet input (CSV only, single file per upload)
-- Time-series-aware splitting (a plain random split, not chronological)
-- Full distribution drift (mean-only, see Limitations)
+- Time-series-aware splitting (train/test split is random, not chronological)
+- Full distribution drift (only mean-based drift is checked)
 
 ---
 
 ## ⚠️ Known Limitations
 
-Documented plainly, not glossed over:
-
-- **Target/task auto-detection is a keyword + statistics heuristic, not a learned model.** Works well on conventionally-named columns, can misfire on unusual schemas — always confirm the detected target before training.
-- **Outlier correction (IQR + median replacement)** is a reasonable general default, not appropriate for every distribution — review the cleaning audit log before treating cleaned data as ground truth.
-- **Model persistence via `joblib`** is Python- and scikit-learn-version sensitive — a model exported in one environment may not load cleanly elsewhere.
-- **One-hot encoding caps out at 30 categories** and drops columns above 90% uniqueness — the dashboard shows what's excluded and why, but it's a hard cutoff, not a smarter encoding strategy.
-- **Drift monitoring compares numeric means only** — no standard deviation, no categorical distribution shift, no formal statistical test. A lightweight MVP-level signal, not full distribution-drift detection.
-- **No time-series awareness anywhere** — a plain random split (stratified for classification where possible), not chronological.
-- **Single-session, single-process, in-memory app** — no persistent storage, user accounts, or history across sessions; no authentication layer, so treat any publicly-hosted instance accordingly.
+- **Target/task auto-detection is a heuristic, not a learned model.** Works well on conventionally-named columns, can misfire on unusual schemas — always confirm the detected target in the editable dropdown before training.
+- **Outlier correction (IQR + median replacement)** is a reasonable general default, not appropriate for every distribution — review the audit log rather than treating cleaned data as ground truth.
+- **Model persistence via `joblib`** is Python- and scikit-learn-version sensitive; a model exported in one environment may not load cleanly in another.
+- **Drift monitoring compares numeric means only** — no standard deviation, no categorical drift, no formal statistical test. A reasonable MVP signal, not full distribution-drift detection.
+- **One-hot encoding caps out at 30 categories** and drops columns above 90% uniqueness — appropriate for typical tabular data, not for high-cardinality categorical features you actually want to keep.
+- **No time-series awareness anywhere** — train/test split is random (stratified for classification where possible), not chronological.
+- **Single-session, single-process app** — no persistent storage, user accounts, or history across sessions.
+- **No authentication** — anyone with access to a running instance can upload and process data.
 
 ---
 
 ## 🔮 Roadmap
 
 ### Immediate
-- Wire in `optuna` for real hyperparameter tuning — flagged in `requirements-optional.txt`'s own comments as the highest interview value (shows reasoning about search spaces, not just calling `.fit()`).
+- Wire in `optuna` for real hyperparameter tuning (highest interview value per the project's own roadmap notes — shows reasoning about search spaces, not just calling `.fit()`)
+- Extend drift monitoring beyond mean comparison (standard deviation, a real statistical test like KS-test or PSI)
 
 ### Medium-term
-- Replace/augment coefficient-based feature importance with real SHAP values (`shap`).
-- Add `xgboost` as a fourth candidate model alongside the existing three.
-- Extend drift monitoring to standard deviation and categorical distribution comparisons, or a formal test (KS-test/PSI).
+- Replace/augment coefficient-based feature importance with real SHAP values (`shap`)
+- Add `xgboost` as a fourth candidate model
+- Multi-sheet `.xlsx` export via `openpyxl`
 
 ### Long-term
-- Multi-sheet `.xlsx` export (`openpyxl`) as an alternative to separate CSV/JSON downloads.
-- Support for larger-than-memory datasets (currently everything loads fully into a pandas DataFrame).
-- Optional persistence layer so cleaning/training results survive across sessions.
+- Support for larger-than-memory datasets (currently everything is a full in-memory pandas DataFrame)
+- Optional persistence layer so results survive across sessions
 
 *(Sourced directly from `requirements-optional.txt`'s own prioritized comments and `CHANGELOG.md` — not invented for this README.)*
 
@@ -641,61 +674,67 @@ Documented plainly, not glossed over:
 
 ## 📈 Scalability
 
-**Current architecture:** single-process, in-memory, one dataset at a time — sized for typical CSVs (thousands to low hundreds-of-thousands of rows) that comfortably fit alongside pandas' overhead.
+**Current architecture:** single-process, in-memory, one dataset at a time — sized for typical CSV files (thousands to low hundreds-of-thousands of rows) that comfortably fit in memory alongside pandas' overhead.
 
-**If this needed to scale further:** the clean `src`/`app` separation means the core logic could be extracted behind an API (FastAPI/Flask) with a separate frontend, or adapted to a chunked/streaming model (e.g. Dask or chunked pandas reads) without touching the UI layer — a realistic direction, not a current capability.
+**If this needed to scale further:** the clean `src`/`app` separation means the core logic could be extracted behind an API (FastAPI/Flask) with a separate frontend, or adapted to a chunked/streaming model (e.g. via Dask) without touching the UI layer — a realistic direction, not a current capability.
 
 ---
 
 ## 🐳 Docker & Deployment
 
-A `Dockerfile` exists and is verified by CI (`docker-build` job, runs after tests pass).
+A `Dockerfile` exists, documented in its own header comments as optional: Streamlit Community Cloud deploys straight from `requirements.txt` with no Docker involved, but the Dockerfile matters the moment you want to deploy anywhere else (Render, Railway, a VM), where "works on my machine" would otherwise be a real risk.
 
 ```bash
 docker build -t datapilot .
 docker run -p 8501:8501 datapilot
 ```
 
-Then open `http://localhost:8501`.
-
 - Base image: `python:3.12-slim`
 - Installs only `requirements.txt` (not the optional/unused dependencies)
-- Exposes port `8501`
-- Includes a `HEALTHCHECK` against Streamlit's own `/_stcore/health` endpoint, so hosting platforms (Render, Railway, etc.) can detect real readiness, not just process start
+- Includes a `HEALTHCHECK` against Streamlit's own `/_stcore/health` endpoint, so hosting platforms can detect real readiness, not just process start
 - Entrypoint: `streamlit run app/frontend/dashboard.py --server.port=8501 --server.address=0.0.0.0 --server.headless=true`
 
-No cloud-specific deployment config (`render.yaml`, `Procfile`, Kubernetes manifests) exists in the repo — the Dockerfile is written to be portable to any container-hosting platform. **CI does not currently deploy anywhere automatically** — it verifies the build, nothing more.
+**CI/CD:** GitHub Actions runs the full suite on Python 3.11 and 3.12 on every push/PR to `main`, then separately verifies the Docker image builds — no automatic deployment step exists yet (CI, not CD).
+
+<!--
+🏗️ DIAGRAM PLACEHOLDER
+Type: Deployment diagram
+Show: Browser → Docker container (Streamlit on :8501) → local filesystem only
+Purpose: Makes explicit there are no external services (databases, APIs) to
+         deploy alongside the app.
+-->
 
 ---
 
 ## 🔒 Security & Privacy
 
-- **No secrets, API keys, or credentials anywhere in the codebase** — confirmed by inspecting every module.
-- **All processing is in-memory and local** — an uploaded CSV is never written to disk automatically, and no data leaves the machine/container the app runs on.
-- **PII pattern detection is informational only** — flags likely email/phone columns so you can decide what to do; nothing is auto-removed, masked, or transmitted.
-- **`joblib` (built on `pickle`) is used for model files** — loading a `.joblib` file from an untrusted source can execute arbitrary code, a standard risk of Python's pickle-based serialization in general, worth knowing before loading a model you didn't produce yourself.
-- **No authentication layer exists** — treat any publicly-hosted instance accordingly.
+- **No secrets, API keys, or credentials anywhere in the codebase.**
+- **No external network calls are made with uploaded data** — all processing is local to the running instance.
+- **Uploaded data is never written to disk automatically** — it lives in memory for the session and is discarded when the session ends.
+- **PII detection is informational only** — DataPilot flags likely email/phone columns so the user can decide what to do; nothing is auto-removed, masked, or transmitted.
+- **`joblib` model files are pickle-based** — loading a `.joblib` file from an untrusted source can execute arbitrary code, a standard risk of Python's pickle serialization in general, not specific to DataPilot, but worth knowing before loading a model you didn't produce yourself.
+- **No authentication layer** — treat any publicly-hosted instance accordingly.
 
 ---
 
 ## ⚡ Performance
 
-No formal benchmarks have been run or are claimed here. Practically: every candidate model (Logistic/Linear Regression, Decision Tree, Random Forest) is a lightweight scikit-learn estimator, so training is fast (seconds, not minutes) at the dataset sizes this tool targets. The main real-world constraint is memory — everything is a full in-memory pandas DataFrame, so very large files (hundreds of MB+) would hit RAM limits before any modeling bottleneck.
+No formal benchmarks have been run or are claimed here. Practically: every model used is a lightweight scikit-learn estimator, so training is fast (seconds, not minutes) at the dataset sizes this tool targets. The main real constraint is memory — everything is a full in-memory pandas DataFrame, so very large files would hit RAM limits before any modeling bottleneck.
 
 ---
 
-## 📚 External Resources
+## 🔗 External Resources
 
 - [Streamlit Documentation](https://docs.streamlit.io/)
 - [pandas Documentation](https://pandas.pydata.org/docs/)
-- [scikit-learn Documentation](https://scikit-learn.org/stable/documentation.html)
+- [scikit-learn Documentation](https://scikit-learn.org/stable/)
 - [scikit-learn: Column Transformer with Mixed Types](https://scikit-learn.org/stable/auto_examples/compose/plot_column_transformer_mixed_types.html) — the exact pattern `preprocessing.py` implements
+- [scikit-learn: `class_weight` parameter](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html)
 - [scikit-learn: Cross-validation](https://scikit-learn.org/stable/modules/cross_validation.html)
 - [NumPy Documentation](https://numpy.org/doc/stable/)
 - [joblib Documentation](https://joblib.readthedocs.io/)
 - [pytest Documentation](https://docs.pytest.org/)
-- [Streamlit: Session State](https://docs.streamlit.io/develop/concepts/architecture/session-state)
-- [Streamlit: AppTest](https://docs.streamlit.io/develop/api-reference/app-testing)
+- [Streamlit: AppTest (testing Streamlit apps)](https://docs.streamlit.io/develop/api-reference/app-testing)
 - [Tukey's fences (IQR outlier rule)](https://en.wikipedia.org/wiki/Outlier#Tukey's_fences)
 - [Docker Documentation](https://docs.docker.com/)
 - [GitHub Actions Documentation](https://docs.github.com/actions)
@@ -713,7 +752,7 @@ No `CONTRIBUTING.md` currently exists. Suggested workflow for anyone picking thi
 2. `pip install -r requirements.txt`
 3. Make changes, keeping business logic in `src/` free of Streamlit imports
 4. Add/update tests in `tests/` — `pytest` should stay green
-5. Open a pull request; CI (`.github/workflows/ci.yml`) must pass before merging
+5. Open a pull request; CI must pass before merging
 
 ---
 
@@ -726,6 +765,7 @@ MIT — see [`LICENSE`](LICENSE).
 ## 👤 Author
 
 **Subham Maheswari Jena**
+
 - GitHub: [Subham093](https://github.com/Subham093)
 
 ---
