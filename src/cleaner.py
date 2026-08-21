@@ -454,16 +454,22 @@ def _clean_dataset_internal(df: pd.DataFrame) -> tuple[pd.DataFrame, list[dict]]
 
         if pd.api.types.is_numeric_dtype(cleaned_df[column]):
 
-            median_value = cleaned_df[column].median()
-
-            if pd.isna(median_value):
+            if cleaned_df[column].notna().sum() == 0:
                 # Every value in this column is missing, so there
                 # is no median to compute — fillna(NaN) would be a
-                # silent no-op. Leave the column as-is; if it's
-                # still constant/empty, step 5 below drops it and
-                # logs that honestly instead of us falsely
+                # silent no-op. Skip calling .median() on an
+                # all-NaN column entirely (rather than calling it
+                # and checking pd.isna() on the result afterward),
+                # since some pandas/NumPy version combinations can
+                # emit a spurious "RuntimeWarning: Mean of empty
+                # slice" from that call even though the result
+                # (NaN) is correct. Leave the column as-is; if
+                # it's still constant/empty, step 5 below drops it
+                # and logs that honestly instead of us falsely
                 # claiming a median fill happened.
                 continue
+
+            median_value = cleaned_df[column].median()
 
             cleaned_df[column] = cleaned_df[column].fillna(median_value)
 
