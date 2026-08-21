@@ -1,0 +1,7 @@
+age,constant_num,constant_text,target
+20,7,same,0
+25,7,same,1
+30,7,same,0
+35,7,same,1
+40,7,same,1
+45,7,same,0

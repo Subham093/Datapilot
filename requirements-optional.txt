@@ -1,0 +1,38 @@
+# OPTIONAL — not currently imported anywhere in the project.
+#
+# Your old requirements.txt listed xgboost, lightgbm,
+# catboost, optuna, and shap, but model_selector.py only
+# ever builds LogisticRegression / DecisionTree /
+# RandomForest via scikit-learn. If an interviewer opens
+# this file expecting to see it used and it isn't, that's
+# a worse look than not listing it at all.
+#
+# Pick ONE of these two options:
+#   1. Actually wire one in (see suggestions below), then
+#      move that line into requirements.txt.
+#   2. Leave this file as a documented "roadmap" — a much
+#      safer thing to point to in an interview than a
+#      silently-unused requirements.txt.
+#
+# Suggested next real feature, in priority order:
+#   - optuna     : hyperparameter tuning in model_trainer.py
+#                  (highest interview value — shows you can
+#                  reason about search spaces, not just call
+#                  .fit())
+#   - shap       : replace/augment explainer.py's coefficient
+#                  -based importance with real SHAP values
+#   - xgboost    : add as a 4th candidate model in
+#                  model_selector.py, alongside the sklearn
+#                  models already there
+#   - openpyxl   : let exporter.py write cleaned data / audit
+#                  log to a multi-sheet .xlsx workbook instead
+#                  of separate CSV/JSON files
+#   - python-dotenv : only needed once you add real secrets
+#                  (API keys, DB URLs) — not needed for the
+#                  current CSV-only workflow
+
+optuna
+shap
+xgboost
+openpyxl
+python-dotenv

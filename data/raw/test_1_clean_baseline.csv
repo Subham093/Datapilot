@@ -1,0 +1,16 @@
+age,income,city,years_experience,department,purchased
+28,45000,Delhi,3,Sales,No
+34,62000,Mumbai,7,Engineering,Yes
+41,78000,Bangalore,12,Engineering,Yes
+25,38000,Pune,1,Sales,No
+37,69000,Delhi,9,Marketing,Yes
+29,47000,Mumbai,4,Sales,No
+45,85000,Bangalore,15,Engineering,Yes
+31,55000,Pune,5,Marketing,No
+39,72000,Delhi,10,Engineering,Yes
+26,40000,Mumbai,2,Sales,No
+33,58000,Bangalore,6,Marketing,Yes
+44,82000,Delhi,14,Engineering,Yes
+27,43000,Pune,2,Sales,No
+36,65000,Mumbai,8,Marketing,Yes
+30,50000,Bangalore,4,Sales,No

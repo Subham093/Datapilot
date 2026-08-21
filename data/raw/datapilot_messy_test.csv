@@ -1,0 +1,12 @@
+age,income,city,experience,constant,purchased
+22.0,30000.0,Mumbai,1.0,A,No
+25.0,42000.0,Pune,2.0,A,No
+,50000.0,Mumbai,4.0,A,Yes
+31.0,,Delhi,6.0,A,Yes
+31.0,50000.0,Delhi,6.0,A,Yes
+150.0,9999999.0,Pune,10.0,A,Yes
+28.0,61000.0,mumbai,,A,No
+35.0,72000.0,Pune ,8.0,A,Yes
+,68000.0,,9.0,A,Yes
+42.0,80000.0,Delhi,12.0,A,Yes
+31.0,50000.0,Delhi,6.0,A,Yes

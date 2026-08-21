@@ -1,0 +1,9 @@
+name,city,comment,score,target
+José,São Paulo,good,10,1
+李明,北京,很好,9,1
+O'Connor,Dublin,"needs, review",7,0
+"A ""quoted"" name","New York, NY","said ""yes""",8,1
+"New
+Line",Bengaluru,"line1
+line2",6,0
+Zoë,München,,10,1

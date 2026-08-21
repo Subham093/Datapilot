@@ -1,0 +1,13 @@
+age,income,city,experience,purchased,constant_column
+25,45000,Delhi,2,No,1
+30,60000,Mumbai,5,Yes,1
+28,,Delhi,3,Yes,1
+35,75000,mumbai,8,Yes,1
+42,90000,Delhi,15,Yes,1
+29,52000,Delhi,4,No,1
+30,60000,Mumbai,5,Yes,1
+51,120000,Bangalore,20,Yes,1
+27,48000,Delhi,2,No,1
+24,40000,delhi,1,No,1
+200,50000,Mumbai,3,No,1
+33,70000,,7,Yes,1

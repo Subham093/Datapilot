@@ -1,0 +1,7 @@
+age,income,city,target
+22,30000,Pune,0
+30,50000,Mumbai,1
+22,30000,Pune,0
+41,72000,Delhi,1
+30,50000,Mumbai,1
+50,90000,Pune,0

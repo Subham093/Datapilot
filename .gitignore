@@ -1,0 +1,27 @@
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+.env
+.venv/
+venv/
+
+*.egg-info/
+build/
+dist/
+
+.vscode/
+.idea/
+
+# Keep folder structure, ignore actual data files
+data/processed/*.csv
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+models/*.pkl
+models/*.joblib
+!models/.gitkeep
+
+.DS_Store
+Thumbs.db
