@@ -187,37 +187,7 @@ Every tab's underlying code executes on **every** Streamlit rerun — `st.tabs()
 
 ## 🏗️ Architecture
 
-```mermaid
-flowchart LR
-    subgraph UI["app/frontend/ — presentation only"]
-        direction TB
-        DB[dashboard.py<br/>entry point]
-        SEC[sections/*.py<br/>one file per tab]
-        THM[theme.py / state.py / helpers.py]
-    end
-    subgraph ENGINE["src/ — pure Python, zero Streamlit imports"]
-        direction TB
-        VAL[validator.py]
-        PRO[profiler.py]
-        QUA[quality.py]
-        CLN[cleaner.py]
-        TSK[task_detector.py]
-        LEAK[leakage.py]
-        PREP[preprocessing.py]
-        MSEL[model_selector.py + model_trainer.py]
-        EVAL[evaluator.py]
-        PRED[predictor.py + explainer.py]
-        MON[monitoring.py]
-        REC[recommendations.py + report_generator.py]
-        CFG[config.py]
-    end
-    UI -->|calls plain functions, renders results| ENGINE
-    CFG -.->|tunable thresholds| QUA
-    CFG -.-> CLN
-    CFG -.-> LEAK
-    CFG -.-> MON
-    CFG -.-> PREP
-```
+![DataPilot Architecture](images/Datapilotarchitecture.png)
 
 - **Nothing in `src/` imports Streamlit.** Every function is unit-testable with a two-line script — no browser session required.
 - **`src/config.py` is the single source of every tunable threshold** (IQR multiplier, identifier-ratio cutoff, leakage correlation cutoff, drift %, one-hot cardinality cap, ...). Its own header comment documents *why*: these numbers used to be hardcoded independently across five files and could silently drift out of sync when only one got tuned.
