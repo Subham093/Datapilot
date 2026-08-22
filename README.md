@@ -13,6 +13,12 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow"></a>
 </p>
 
+<p align="center">
+  🔗 <a href="https://dashboardpy-4v5mjwgedpkucub6sgi4af.streamlit.app/"><b>Live Demo</b></a>
+  <br>
+  Deployed on <a href="https://streamlit.io/cloud">Streamlit Community Cloud</a>
+</p>
+
 > 💡 **New here?** Jump to the [Beginner Usage Guide](#-beginner-usage-guide) — it walks through the app screen-by-screen, no prior ML or coding knowledge assumed.
 
 **At a glance:**
