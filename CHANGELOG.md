@@ -1,3 +1,20 @@
+## [1.3.1]
+
+### Fixed
+- `src/cleaner.py`: the missing-value fill step called
+  `.median()` on a numeric column unconditionally, then checked
+  `pd.isna()` on the result to detect an all-missing column.
+  On some pandas/NumPy version combinations, calling `.median()`
+  on an all-NaN column can emit a spurious
+  `RuntimeWarning: Mean of empty slice`, even though the
+  returned value (`NaN`) is correct. Now checks
+  `column.notna().sum() == 0` *before* calling `.median()` at
+  all, skipping the call entirely for all-missing columns
+  instead of calling it and inspecting the result afterward.
+  Behavior and audit-log output are unchanged — verified against
+  `data/edge_cases/02_all_missing_column.csv` and the full
+  56-test suite (56/56 still passing).
+
 ## [1.3.0]
 
 ### Changed
