@@ -62,9 +62,7 @@
 - [Contributing](#-contributing)
 - [License](#-license)
 - [Author](#-author)
-- [Why This Project Matters](#-why-this-project-matters)
-- [Interview Preparation](#-interview-preparation)
-- [Final Summary](#-final-summary)
+- [Acknowledgements](#-acknowledgements)
 
 ---
 
