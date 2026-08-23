@@ -204,17 +204,26 @@ Every tab's underlying code executes on **every** Streamlit rerun — `st.tabs()
 
 ```text
 DataPilot/
-├── .github/workflows/
-│   └── ci.yml                      # GitHub Actions: pytest (3.11 & 3.12) + Docker build check
+├── .github/
+│   └── workflows/
+│       ├── ci.yml                               # GitHub Actions: pytest (3.11 & 3.12) + Docker build check
+│       └── README.md
 ├── .streamlit/
-│   └── config.toml                 # Base Streamlit theme colors
+│   ├── config.toml                              # Base Streamlit theme colors
+│   └── README.md
+├── .dockerignore
+├── .gitignore
 ├── app/
+│   ├── __init__.py
 │   └── frontend/
-│       ├── dashboard.py            # Thin entry point — wires session state, renders tabs
-│       ├── state.py                # Session-state defaults
-│       ├── theme.py                # CSS injection (navy/amber "flight deck" theme)
-│       ├── helpers.py              # Shared display/formatting helpers
-│       └── sections/               # One render_*(ctx) function per tab
+│       ├── __init__.py
+│       ├── dashboard.py                         # Thin entry point — wires session state, renders tabs
+│       ├── state.py                             # Session-state defaults
+│       ├── theme.py                             # CSS injection (navy/amber "flight deck" theme)
+│       ├── helpers.py                           # Shared display/formatting helpers
+│       ├── README.md       
+│       └── sections/                            # One render_*(ctx) function per tab
+│           ├── __init__.py
 │           ├── upload_section.py
 │           ├── overview_section.py
 │           ├── quality_section.py
@@ -222,8 +231,10 @@ DataPilot/
 │           ├── drift_section.py
 │           ├── recommendations_section.py
 │           ├── training_section.py
-│           └── report_section.py
-├── src/                            # Business logic — zero Streamlit imports
+│           ├── report_section.py
+│           └── README.md
+├── src/                                         # Business logic — zero Streamlit imports
+│   ├── __init__.py
 │   ├── config.py
 │   ├── validator.py
 │   ├── profiler.py
@@ -240,29 +251,46 @@ DataPilot/
 │   ├── monitoring.py
 │   ├── recommendations.py
 │   ├── report_generator.py
-│   └── exporter.py
-├── tests/                          # pytest suite — 56 tests across 17 files
-│   ├── conftest.py
-│   ├── test_dashboard_entrypoint.py
+│   ├── exporter.py
+│   └── README.md
+├── tests/                                       # pytest suite — 56 tests across 17 files
+│   ├── __init__.py     
+│   ├── conftest.py                              # Shared fixtures
+│   ├── test_cleaner.py     
+│   ├── test_dashboard_entrypoint.py             # Regression test for a real import-path bug
+│   ├── test_evaluation.py
+│   ├── test_leakage.py
+│   ├── test_ml_engine.py
+│   ├── test_model_persistence.py
+│   ├── test_monitoring.py
+│   ├── test_prediction.py
+│   ├── test_preprocessing.py
+│   ├── test_profiler.py
+│   ├── test_quality.py
+│   ├── test_recommendations.py
+│   ├── test_report_generator.py
 │   ├── test_section_rename_regression.py
-│   └── test_*.py
+│   ├── test_target_selectbox.py
+│   ├── test_task_detector.py
+│   ├── test_validator.py
+│   └── README.md
 ├── data/
-│   ├── raw/                        # Demo-ready sample CSVs
-│   ├── processed/                  # Empty scratch space (gitignored contents)
-│   └── edge_cases/                 # 16-file robustness/QA pack — not demo material
-├── models/                         # Empty scratch space for saved .joblib models
-├── experiments/                    # Empty scratch space, unwired to the app
+│   ├── raw/                                    # Demo-ready sample CSVs
+│   ├── processed/                              # Empty scratch space (gitignored contents)
+│   └── edge_cases/                             # 16-file robustness/QA pack — not demo material
+├── images/                                     # Screenshots and diagrams used in this README
+├── models/                                     # Empty scratch space for saved .joblib models
+├── experiments/                                # Empty scratch space, unwired to the app
 ├── Dockerfile
-├── .dockerignore
 ├── pytest.ini
-├── requirements.txt                # Actual runtime dependencies
-├── requirements-optional.txt       # Honest roadmap — packages NOT currently used
+├── requirements.txt                            # Actual runtime dependencies
+├── requirements-optional.txt                   # Honest roadmap — packages NOT currently used
 ├── CHANGELOG.md
-├── LICENSE                         # MIT
+├── LICENSE                                     # MIT
 └── README.md
 ```
 
-> 📝 Nearly every folder above has its own local `README.md` explaining specifically why that folder exists — worth a look if exploring the repo folder-by-folder.
+> 📝 Nearly every folder above has its own local `README.md` explaining specifically why that folder exists — worth a look if exploring the repo folder-by-folder rather than top-down.
 
 ---
 
